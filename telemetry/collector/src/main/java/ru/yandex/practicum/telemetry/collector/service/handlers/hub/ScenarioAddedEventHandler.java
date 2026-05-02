@@ -10,11 +10,11 @@ import ru.yandex.practicum.telemetry.collector.model.hub.ScenarioAddedEvent;
 public class ScenarioAddedEventHandler implements BaseHubEventHandler {
 
     @Override
-    public HubEventAvro mapToAvro(HubEvent event) {
-        ScenarioAddedEvent _event = (ScenarioAddedEvent) event;
+    public HubEventAvro mapToAvro(HubEvent hubEvent) {
+        ScenarioAddedEvent event = (ScenarioAddedEvent) hubEvent;
         ScenarioAddedEventAvro payload = ScenarioAddedEventAvro.newBuilder()
-                .setName(_event.getName())
-                .setConditions(_event.getConditions().stream()
+                .setName(event.getName())
+                .setConditions(event.getConditions().stream()
                         .map(s -> ScenarioConditionAvro.newBuilder()
                                     .setSensorId(s.getSensorId())
                                     .setType(ConditionTypeAvro.valueOf(s.getType()))
@@ -22,7 +22,7 @@ public class ScenarioAddedEventHandler implements BaseHubEventHandler {
                                     .setValue(s.getValue())
                                     .build())
                         .toList())
-                .setActions(_event.getActions().stream()
+                .setActions(event.getActions().stream()
                         .map(s -> DeviceActionAvro.newBuilder()
                                 .setSensorId(s.getSensorId())
                                 .setType(ActionTypeAvro.valueOf(s.getType()))
@@ -32,8 +32,8 @@ public class ScenarioAddedEventHandler implements BaseHubEventHandler {
                 .build();
 
         return HubEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }

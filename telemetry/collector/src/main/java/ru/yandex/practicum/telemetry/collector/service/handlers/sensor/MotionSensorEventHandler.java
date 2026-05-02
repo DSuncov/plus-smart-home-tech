@@ -11,18 +11,18 @@ import ru.yandex.practicum.telemetry.collector.model.sensors.SensorEvent;
 public class MotionSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
-    public SensorEventAvro mapToAvro(SensorEvent event) {
-        MotionSensorEvent _event = (MotionSensorEvent) event;
+    public SensorEventAvro mapToAvro(SensorEvent sensorEvent) {
+        MotionSensorEvent event = (MotionSensorEvent) sensorEvent;
         MotionSensorAvro payload = MotionSensorAvro.newBuilder()
-                .setLinkQuality(_event.getLinkQuality())
-                .setMotion(_event.getMotion())
-                .setVoltage(_event.getVoltage())
+                .setLinkQuality(event.getLinkQuality())
+                .setMotion(event.getMotion())
+                .setVoltage(event.getVoltage())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setId(_event.getId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setId(event.getId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }

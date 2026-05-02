@@ -11,16 +11,16 @@ import ru.yandex.practicum.telemetry.collector.model.sensors.SwitchSensorEvent;
 public class SwitchSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
-    public SensorEventAvro mapToAvro(SensorEvent event) {
-        SwitchSensorEvent _event = (SwitchSensorEvent) event;
+    public SensorEventAvro mapToAvro(SensorEvent sensorEvent) {
+        SwitchSensorEvent event = (SwitchSensorEvent) sensorEvent;
         SwitchSensorAvro payload =  SwitchSensorAvro.newBuilder()
-                .setState(_event.getState())
+                .setState(event.getState())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setId(_event.getId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setId(event.getId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }

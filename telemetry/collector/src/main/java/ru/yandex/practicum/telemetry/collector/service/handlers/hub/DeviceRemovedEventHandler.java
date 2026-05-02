@@ -11,15 +11,15 @@ import ru.yandex.practicum.telemetry.collector.model.hub.HubEvent;
 public class DeviceRemovedEventHandler implements BaseHubEventHandler {
 
     @Override
-    public HubEventAvro mapToAvro(HubEvent event) {
-        DeviceRemovedEvent _event = (DeviceRemovedEvent) event;
+    public HubEventAvro mapToAvro(HubEvent hubEvent) {
+        DeviceRemovedEvent event = (DeviceRemovedEvent) hubEvent;
         DeviceRemovedEventAvro payload = DeviceRemovedEventAvro.newBuilder()
-                .setId(_event.getId())
+                .setId(event.getId())
                 .build();
 
         return HubEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }

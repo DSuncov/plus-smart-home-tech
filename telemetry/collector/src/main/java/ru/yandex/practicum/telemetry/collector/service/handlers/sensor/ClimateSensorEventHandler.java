@@ -11,18 +11,18 @@ import ru.yandex.practicum.telemetry.collector.model.sensors.SensorEvent;
 public class ClimateSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
-    public SensorEventAvro mapToAvro(SensorEvent event) {
-        ClimateSensorEvent _event = (ClimateSensorEvent) event;
+    public SensorEventAvro mapToAvro(SensorEvent sensorEvent) {
+        ClimateSensorEvent event = (ClimateSensorEvent) sensorEvent;
         ClimateSensorAvro payload = ClimateSensorAvro.newBuilder()
-                .setTemperatureC(_event.getTemperatureC())
-                .setHumidity(_event.getHumidity())
-                .setCo2Level(_event.getCo2Level())
+                .setTemperatureC(event.getTemperatureC())
+                .setHumidity(event.getHumidity())
+                .setCo2Level(event.getCo2Level())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setId(_event.getId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setId(event.getId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }

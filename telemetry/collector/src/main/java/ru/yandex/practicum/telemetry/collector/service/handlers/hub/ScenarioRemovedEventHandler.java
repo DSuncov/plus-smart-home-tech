@@ -11,15 +11,15 @@ import ru.yandex.practicum.telemetry.collector.model.hub.ScenarioRemovedEvent;
 public class ScenarioRemovedEventHandler implements BaseHubEventHandler {
 
     @Override
-    public HubEventAvro mapToAvro(HubEvent event) {
-        ScenarioRemovedEvent _event = (ScenarioRemovedEvent) event;
+    public HubEventAvro mapToAvro(HubEvent hubEvent) {
+        ScenarioRemovedEvent event = (ScenarioRemovedEvent) hubEvent;
         ScenarioRemovedEventAvro payload = ScenarioRemovedEventAvro.newBuilder()
-                .setName(_event.getName())
+                .setName(event.getName())
                 .build();
 
         return HubEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }

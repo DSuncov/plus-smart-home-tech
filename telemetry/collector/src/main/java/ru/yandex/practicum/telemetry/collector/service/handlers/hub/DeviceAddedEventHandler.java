@@ -12,16 +12,16 @@ import ru.yandex.practicum.telemetry.collector.model.hub.HubEvent;
 public class DeviceAddedEventHandler implements BaseHubEventHandler {
 
     @Override
-    public HubEventAvro mapToAvro(HubEvent event) {
-        DeviceAddedEvent _event = (DeviceAddedEvent) event;
+    public HubEventAvro mapToAvro(HubEvent hubEvent) {
+        DeviceAddedEvent event = (DeviceAddedEvent) hubEvent;
         DeviceAddedEventAvro payload = DeviceAddedEventAvro.newBuilder()
-                .setId(_event.getId())
-                .setType(DeviceTypeAvro.valueOf(_event.getDeviceType()))
+                .setId(event.getId())
+                .setType(DeviceTypeAvro.valueOf(event.getDeviceType()))
                 .build();
 
         return HubEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }

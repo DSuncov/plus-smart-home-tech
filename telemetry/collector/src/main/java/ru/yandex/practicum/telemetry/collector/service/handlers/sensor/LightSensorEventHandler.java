@@ -11,17 +11,17 @@ import ru.yandex.practicum.telemetry.collector.model.sensors.SensorEvent;
 public class LightSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
-    public SensorEventAvro mapToAvro(SensorEvent event) {
-        LightSensorEvent _event = (LightSensorEvent) event;
+    public SensorEventAvro mapToAvro(SensorEvent sensorEvent) {
+        LightSensorEvent event = (LightSensorEvent) sensorEvent;
         LightSensorAvro payload = LightSensorAvro.newBuilder()
-                .setLinkQuality(_event.getLinkQuality())
-                .setLuminosity(_event.getLuminosity())
+                .setLinkQuality(event.getLinkQuality())
+                .setLuminosity(event.getLuminosity())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(_event.getHubId())
-                .setId(_event.getId())
-                .setTimestamp(_event.getTimestamp())
+                .setHubId(event.getHubId())
+                .setId(event.getId())
+                .setTimestamp(event.getTimestamp())
                 .setPayload(payload)
                 .build();
     }
