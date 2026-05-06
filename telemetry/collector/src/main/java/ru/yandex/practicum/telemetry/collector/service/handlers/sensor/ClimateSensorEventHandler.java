@@ -1,34 +1,38 @@
 package ru.yandex.practicum.telemetry.collector.service.handlers.sensor;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.grpc.telemetry.event.ClimateSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
-import ru.yandex.practicum.telemetry.collector.model.enums.SensorEventType;
-import ru.yandex.practicum.telemetry.collector.model.sensors.ClimateSensorEvent;
-import ru.yandex.practicum.telemetry.collector.model.sensors.SensorEvent;
+
+import java.time.Instant;
 
 @Component
 public class ClimateSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
-    public SensorEventAvro mapToAvro(SensorEvent sensorEvent) {
-        ClimateSensorEvent event = (ClimateSensorEvent) sensorEvent;
+    public SensorEventAvro mapToAvro(SensorEventProto sensorEvent) {
+        ClimateSensorProto climateSensorProto = sensorEvent.getClimateSensor();
         ClimateSensorAvro payload = ClimateSensorAvro.newBuilder()
-                .setTemperatureC(event.getTemperatureC())
-                .setHumidity(event.getHumidity())
-                .setCo2Level(event.getCo2Level())
+                .setTemperatureC(climateSensorProto.getTemperatureC())
+                .setHumidity(climateSensorProto.getHumidity())
+                .setCo2Level(climateSensorProto.getCo2Level())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(event.getHubId())
-                .setId(event.getId())
-                .setTimestamp(event.getTimestamp())
+                .setId(sensorEvent.getId())
+                .setHubId(sensorEvent.getHubId())
+                .setTimestamp(Instant.ofEpochSecond(
+                        sensorEvent.getTimestamp().getSeconds(),
+                        sensorEvent.getTimestamp().getNanos()
+                ))
                 .setPayload(payload)
                 .build();
     }
 
     @Override
-    public SensorEventType getType() {
-        return SensorEventType.CLIMATE_SENSOR_EVENT;
+    public SensorEventProto.PayloadCase getType() {
+        return SensorEventProto.PayloadCase.CLIMATE_SENSOR;
     }
 }
