@@ -1,34 +1,36 @@
 package ru.yandex.practicum.telemetry.collector.service.handlers.sensor;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
-import ru.yandex.practicum.telemetry.collector.model.enums.SensorEventType;
-import ru.yandex.practicum.telemetry.collector.model.sensors.ClimateSensorEvent;
-import ru.yandex.practicum.telemetry.collector.model.sensors.SensorEvent;
+
+import java.time.Instant;
 
 @Component
 public class ClimateSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
-    public SensorEventAvro mapToAvro(SensorEvent sensorEvent) {
-        ClimateSensorEvent event = (ClimateSensorEvent) sensorEvent;
+    public SensorEventAvro mapToAvro(SensorEventProto sensorEvent) {
         ClimateSensorAvro payload = ClimateSensorAvro.newBuilder()
-                .setTemperatureC(event.getTemperatureC())
-                .setHumidity(event.getHumidity())
-                .setCo2Level(event.getCo2Level())
+                .setTemperatureC(sensorEvent.getClimateSensor().getTemperatureC())
+                .setHumidity(sensorEvent.getClimateSensor().getHumidity())
+                .setCo2Level(sensorEvent.getClimateSensor().getCo2Level())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(event.getHubId())
-                .setId(event.getId())
-                .setTimestamp(event.getTimestamp())
+                .setHubId(sensorEvent.getHubId())
+                .setId(sensorEvent.getId())
+                .setTimestamp(Instant.ofEpochSecond(
+                        sensorEvent.getTimestamp().getSeconds(),
+                        sensorEvent.getTimestamp().getNanos()
+                ))
                 .setPayload(payload)
                 .build();
     }
 
     @Override
-    public SensorEventType getType() {
-        return SensorEventType.CLIMATE_SENSOR_EVENT;
+    public SensorEventProto.PayloadCase getType() {
+        return SensorEventProto.PayloadCase.CLIMATE_SENSOR;
     }
 }
