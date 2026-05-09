@@ -1,34 +1,38 @@
 package ru.yandex.practicum.telemetry.collector.service.handlers.sensor;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.grpc.telemetry.event.MotionSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
-import ru.yandex.practicum.telemetry.collector.model.enums.SensorEventType;
-import ru.yandex.practicum.telemetry.collector.model.sensors.MotionSensorEvent;
-import ru.yandex.practicum.telemetry.collector.model.sensors.SensorEvent;
+
+import java.time.Instant;
 
 @Component
 public class MotionSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
-    public SensorEventAvro mapToAvro(SensorEvent sensorEvent) {
-        MotionSensorEvent event = (MotionSensorEvent) sensorEvent;
+    public SensorEventAvro mapToAvro(SensorEventProto sensorEvent) {
+        MotionSensorProto motionSensorProto = sensorEvent.getMotionSensor();
         MotionSensorAvro payload = MotionSensorAvro.newBuilder()
-                .setLinkQuality(event.getLinkQuality())
-                .setMotion(event.getMotion())
-                .setVoltage(event.getVoltage())
+                .setLinkQuality(motionSensorProto.getLinkQuality())
+                .setMotion(motionSensorProto.getMotion())
+                .setVoltage(motionSensorProto.getVoltage())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(event.getHubId())
-                .setId(event.getId())
-                .setTimestamp(event.getTimestamp())
+                .setHubId(sensorEvent.getHubId())
+                .setId(sensorEvent.getId())
+                .setTimestamp(Instant.ofEpochSecond(
+                        sensorEvent.getTimestamp().getSeconds(),
+                        sensorEvent.getTimestamp().getNanos()
+                ))
                 .setPayload(payload)
                 .build();
     }
 
     @Override
-    public SensorEventType getType() {
-        return SensorEventType.MOTION_SENSOR_EVENT;
+    public SensorEventProto.PayloadCase getType() {
+        return SensorEventProto.PayloadCase.MOTION_SENSOR;
     }
 }
