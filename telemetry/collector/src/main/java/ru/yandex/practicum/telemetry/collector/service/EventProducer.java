@@ -9,16 +9,16 @@ import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
-import ru.yandex.practicum.telemetry.collector.configuration.KafkaProducerConfig;
-import ru.yandex.practicum.telemetry.collector.service.handlers.hub.BaseHubEventHandler;
-import ru.yandex.practicum.telemetry.collector.service.handlers.sensor.BaseSensorEventHandler;
+import ru.yandex.practicum.telemetry.collector.configuration.KafkaEventProducerConfig;
+import ru.yandex.practicum.telemetry.collector.utils.handlers.hub.BaseHubEventHandler;
+import ru.yandex.practicum.telemetry.collector.utils.handlers.sensor.BaseSensorEventHandler;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class KafkaEventProducer implements AutoCloseable {
+public class EventProducer implements AutoCloseable {
 
-    private final KafkaProducerConfig config;
+    private final KafkaEventProducerConfig config;
     private final KafkaTemplate<String, SpecificRecordBase> kafkaTemplate;
 
     public void send(SensorEventProto event, BaseSensorEventHandler sensorEventHandler) {
@@ -33,7 +33,7 @@ public class KafkaEventProducer implements AutoCloseable {
                     if (exception == null) {
                         log.info("Сообщение успешно отправлено");
                     } else {
-                        log.info("Сообщение не удалось отправить");
+                        log.error("Сообщение не удалось отправить");
                     }
                 });
     }
@@ -50,7 +50,7 @@ public class KafkaEventProducer implements AutoCloseable {
                     if (exception == null) {
                         log.info("Сообщение успешно отправлено");
                     } else {
-                        log.info("Сообщение не удалось отправить");
+                        log.error("Сообщение не удалось отправить");
                     }
                 });
     }

@@ -13,9 +13,9 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
 @Getter
-public class KafkaProducerConfig {
+@Configuration
+public class KafkaEventProducerConfig {
 
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;

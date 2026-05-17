@@ -1,20 +1,20 @@
-package ru.yandex.practicum.telemetry.collector.service.handlers.sensor;
+package ru.yandex.practicum.telemetry.collector.utils.handlers.sensor;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.TemperatureSensorAvro;
 
 import java.time.Instant;
 
 @Component
-public class LightSensorEventHandler implements BaseSensorEventHandler {
+public class TemperatureSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
     public SensorEventAvro mapToAvro(SensorEventProto sensorEvent) {
-        LightSensorAvro payload = LightSensorAvro.newBuilder()
-                .setLinkQuality(sensorEvent.getLightSensor().getLinkQuality())
-                .setLuminosity(sensorEvent.getLightSensor().getLuminosity())
+        TemperatureSensorAvro payload = TemperatureSensorAvro.newBuilder()
+                .setTemperatureC(sensorEvent.getTemperatureSensor().getTemperatureC())
+                .setTemperatureF(sensorEvent.getTemperatureSensor().getTemperatureF())
                 .build();
 
         return SensorEventAvro.newBuilder()
@@ -30,6 +30,6 @@ public class LightSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
     public SensorEventProto.PayloadCase getType() {
-        return SensorEventProto.PayloadCase.LIGHT_SENSOR;
+        return SensorEventProto.PayloadCase.TEMPERATURE_SENSOR;
     }
 }

@@ -8,9 +8,9 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.telemetry.collector.service.KafkaEventProducer;
-import ru.yandex.practicum.telemetry.collector.service.handlers.hub.BaseHubEventHandler;
-import ru.yandex.practicum.telemetry.collector.service.handlers.sensor.BaseSensorEventHandler;
+import ru.yandex.practicum.telemetry.collector.service.EventProducer;
+import ru.yandex.practicum.telemetry.collector.utils.handlers.hub.BaseHubEventHandler;
+import ru.yandex.practicum.telemetry.collector.utils.handlers.sensor.BaseSensorEventHandler;
 
 import java.util.Map;
 import java.util.Set;
@@ -18,21 +18,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @GrpcService
-public class SmartHomeEventController extends CollectorControllerGrpc.CollectorControllerImplBase {
+public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
     private final Map<SensorEventProto.PayloadCase, BaseSensorEventHandler> sensorEventHandlers;
     private final Map<HubEventProto.PayloadCase, BaseHubEventHandler> hubEventHandlers;
-    private final KafkaEventProducer kafkaEventProducer;
+    private final EventProducer eventProducer;
 
-    public SmartHomeEventController(
+    public EventController(
             Set<BaseSensorEventHandler> sensorEventHandlers,
             Set<BaseHubEventHandler> hubEventHandlers,
-            KafkaEventProducer kafkaEventProducer) {
+            EventProducer kafkaEventProducer) {
         this.sensorEventHandlers = sensorEventHandlers.stream()
                 .collect(Collectors.toMap(BaseSensorEventHandler::getType, Function.identity()));
         this.hubEventHandlers = hubEventHandlers.stream()
                 .collect(Collectors.toMap(BaseHubEventHandler::getType, Function.identity()));
-        this.kafkaEventProducer = kafkaEventProducer;
+        this.eventProducer = kafkaEventProducer;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SmartHomeEventController extends CollectorControllerGrpc.CollectorC
             if (sensorEventHandler == null) {
                 throw new IllegalArgumentException("Обработчик для такого события отсутствует.");
             }
-            kafkaEventProducer.send(sensorEventProto, sensorEventHandler);
+            eventProducer.send(sensorEventProto, sensorEventHandler);
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class SmartHomeEventController extends CollectorControllerGrpc.CollectorC
             if (hubEventHandler == null) {
                 throw new IllegalArgumentException("Обработчик для такого события отсутствует.");
             }
-            kafkaEventProducer.send(hubEventProto, hubEventHandler);
+            eventProducer.send(hubEventProto, hubEventHandler);
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {

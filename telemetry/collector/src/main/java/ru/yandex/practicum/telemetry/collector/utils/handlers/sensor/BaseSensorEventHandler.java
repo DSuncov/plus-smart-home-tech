@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.service.handlers.sensor;
+package ru.yandex.practicum.telemetry.collector.utils.handlers.sensor;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
