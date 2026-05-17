@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.configuration;
+package ru.yandex.practicum.telemetry.aggregator.configuration;
 
 import lombok.Getter;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Configuration
 @Getter
-public class KafkaProducerConfig {
+public class KafkaSnapshotProducerConfig {
 
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;
@@ -26,13 +26,9 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.producer.value-serializer}")
     private String valueSerializer;
 
-    @Value("${spring.kafka.producer.topic.sensors}")
-    private String topicSensors;
+    @Value("${spring.kafka.producer.topic.snapshots}")
+    private String topicSnapshots;
 
-    @Value("${spring.kafka.producer.topic.hubs}")
-    private String topicHubs;
-
-    @Bean
     public ProducerFactory<String, SpecificRecordBase> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -46,4 +42,5 @@ public class KafkaProducerConfig {
     public KafkaTemplate<String, SpecificRecordBase> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
+
 }
