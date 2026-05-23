@@ -28,7 +28,7 @@ services:
                              --bootstrap-server kafka:29092 && \
                 kafka-topics --create --topic telemetry.snapshots.v1 \
                              --partitions 1 --replication-factor 1 --if-not-exists \
-                             --bootstrap-server kafka:29092 && \
+                            --bootstrap-server kafka:29092 && \
                 kafka-topics --create --topic telemetry.hubs.v1 \
                              --partitions 1 --replication-factor 1 --if-not-exists \
                              --bootstrap-server kafka:29092'"
@@ -40,12 +40,12 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_PASSWORD=smarthome
-      - POSTGRES_USER=smarthome
-      - POSTGRES_DB=smarthome
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=smart_home
       - TZ=Europe/Samara
     volumes:
-    - ./analyzer/src/main/resources/schema:/docker-entrypoint-initdb.d
+    - ./analyzer/src/main/resources:/docker-entrypoint-initdb.d
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s

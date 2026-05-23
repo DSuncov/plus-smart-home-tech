@@ -37,7 +37,7 @@ public class SnapshotProcessor implements Runnable {
 
             while (true) {
                 ConsumerRecords<String, SensorsSnapshotAvro> data = consumer.poll(Duration.ofMillis(500));
-                log.info("ПОЛУЧИЛИ ЗАПИСИ");
+                log.info("ПОЛУЧИЛИ ЗАПИСИ СНАПШОТА");
                 for (ConsumerRecord<String, SensorsSnapshotAvro> record : data) {
                     SensorsSnapshotAvro avro = record.value();
                     if (avro != null) {
@@ -47,19 +47,23 @@ public class SnapshotProcessor implements Runnable {
                         log.info("ВЫПОЛНИЛИ ОБРАБОТКУ");
                     }
                 }
+
+                if (!data.isEmpty()) {
+                    consumer.commitSync(offsets);
+                }
             }
         } catch (WakeupException ignored) {
-        } catch (Exception e) {
-            log.error("Ошибка во время обработки событий от датчиков", e);
-        } finally {
-            try {
-                consumer.commitSync(offsets);
-            } catch (Exception e) {
-                log.error("Смещения не зафиксированы");
-            } finally {
-                log.info("Закрываем консьюмер");
-                consumer.close();
-            }
+//        } catch (Exception e) {
+//            log.error("Ошибка во время обработки событий от датчиков", e);
+//        } finally {
+//            try {
+//                consumer.commitSync(offsets);
+//            } catch (Exception e) {
+//                log.error("Смещения не зафиксированы");
+//            } finally {
+//                log.info("Закрываем консьюмер");
+//                consumer.close();
+//            }
         }
     }
 }

@@ -72,7 +72,7 @@ public class HubEventDbHandlerImpl implements HubEventDbHandler {
                                     .sensorId(c.getSensorId())
                                     .build())
                             .scenario(scenario)
-                            .sensor(sensorRepository.getReferenceById(Long.valueOf(c.getSensorId())))
+                            .sensor(sensorRepository.findBySensorId(c.getSensorId()).get())
                             .condition(condition)
                             .build();
                 })
@@ -94,7 +94,7 @@ public class HubEventDbHandlerImpl implements HubEventDbHandler {
                                     .sensorId(a.getSensorId())
                                     .build())
                             .scenario(scenario)
-                            .sensor(sensorRepository.getReferenceById(Long.valueOf(a.getSensorId())))
+                            .sensor(sensorRepository.findBySensorId(a.getSensorId()).get())
                             .action(action)
                             .build();
                 })

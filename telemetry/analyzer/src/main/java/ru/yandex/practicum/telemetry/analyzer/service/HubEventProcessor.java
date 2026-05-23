@@ -37,6 +37,7 @@ public class HubEventProcessor implements Runnable {
 
             while (true) {
                 ConsumerRecords<String, HubEventAvro> data = consumer.poll(Duration.ofMillis(500));
+                log.info("ПОЛУЧИЛИ ЗАПИСИ ХАБА");
                 for (ConsumerRecord<String, HubEventAvro> record : data) {
                     HubEventAvro avro = record.value();
 
@@ -45,19 +46,23 @@ public class HubEventProcessor implements Runnable {
                         handler.typeHandler(avro);
                     }
                 }
+
+                if (!data.isEmpty()) {
+                    consumer.commitSync(offsets);
+                }
             }
         } catch (WakeupException ignored) {
-        } catch (Exception e) {
-            log.error("Ошибка во время обработки событий от датчиков", e);
-        } finally {
-            try {
-                consumer.commitSync(offsets);
-            } catch (Exception e) {
-                log.error("Смещения не зафиксированы");
-            } finally {
-                log.info("Закрываем консьюмер");
-                consumer.close();
-            }
+//        } catch (Exception e) {
+//            log.error("Ошибка во время обработки событий от датчиков", e);
+//        } finally {
+//            try {
+//                consumer.commitSync(offsets);
+//            } catch (Exception e) {
+//                log.error("Смещения не зафиксированы");
+//            } finally {
+//                log.info("Закрываем консьюмер");
+//                consumer.close();
+//            }
         }
     }
 }
