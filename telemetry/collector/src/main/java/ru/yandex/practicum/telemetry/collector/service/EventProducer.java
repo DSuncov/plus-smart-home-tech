@@ -10,8 +10,8 @@ import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.telemetry.collector.configuration.KafkaEventProducerConfig;
-import ru.yandex.practicum.telemetry.collector.utils.handlers.hub.BaseHubEventHandler;
-import ru.yandex.practicum.telemetry.collector.utils.handlers.sensor.BaseSensorEventHandler;
+import ru.yandex.practicum.telemetry.collector.handlers.hub.BaseHubEventHandler;
+import ru.yandex.practicum.telemetry.collector.handlers.sensor.BaseSensorEventHandler;
 
 @Component
 @Slf4j

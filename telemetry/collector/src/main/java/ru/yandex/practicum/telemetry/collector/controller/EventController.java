@@ -9,8 +9,8 @@ import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.telemetry.collector.service.EventProducer;
-import ru.yandex.practicum.telemetry.collector.utils.handlers.hub.BaseHubEventHandler;
-import ru.yandex.practicum.telemetry.collector.utils.handlers.sensor.BaseSensorEventHandler;
+import ru.yandex.practicum.telemetry.collector.handlers.hub.BaseHubEventHandler;
+import ru.yandex.practicum.telemetry.collector.handlers.sensor.BaseSensorEventHandler;
 
 import java.util.Map;
 import java.util.Set;
