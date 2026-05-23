@@ -15,18 +15,21 @@ import java.time.Instant;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class HubRouterClient {
 
-    @GrpcClient("hub-router")
     private final HubRouterControllerGrpc.HubRouterControllerBlockingStub hubRouterClient;
+
+    public HubRouterClient(@GrpcClient("hub-router") HubRouterControllerGrpc.HubRouterControllerBlockingStub hubRouterClient) {
+        this.hubRouterClient = hubRouterClient;
+    }
 
     public void sendDeviceRequestAction(String hubId, String name, DeviceActionAvro action) {
         try {
             DeviceActionRequest request = convert(hubId, name, action);
             hubRouterClient.handleDeviceAction(request);
+            log.info("УСПЕШНО ОТПРАВЛЕН В ХАБ");
         } catch (Exception e) {
-            log.error("Ошибка при отправке сообщения по gRPC");
+            e.printStackTrace();
         }
     }
 

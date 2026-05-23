@@ -36,7 +36,7 @@ public class SnapshotProcessor implements Runnable {
             consumer.subscribe(List.of(config.getKafkaProperties().snapshotConsumer().topic()));
 
             while (true) {
-                ConsumerRecords<String, SensorsSnapshotAvro> data = consumer.poll(Duration.ofMillis(500));
+                ConsumerRecords<String, SensorsSnapshotAvro> data = consumer.poll(Duration.ofMillis(5000));
                 log.info("ПОЛУЧИЛИ ЗАПИСИ СНАПШОТА");
                 for (ConsumerRecord<String, SensorsSnapshotAvro> record : data) {
                     SensorsSnapshotAvro avro = record.value();
@@ -53,17 +53,6 @@ public class SnapshotProcessor implements Runnable {
                 }
             }
         } catch (WakeupException ignored) {
-//        } catch (Exception e) {
-//            log.error("Ошибка во время обработки событий от датчиков", e);
-//        } finally {
-//            try {
-//                consumer.commitSync(offsets);
-//            } catch (Exception e) {
-//                log.error("Смещения не зафиксированы");
-//            } finally {
-//                log.info("Закрываем консьюмер");
-//                consumer.close();
-//            }
         }
     }
 }

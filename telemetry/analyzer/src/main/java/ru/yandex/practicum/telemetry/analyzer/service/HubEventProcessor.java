@@ -36,7 +36,7 @@ public class HubEventProcessor implements Runnable {
             consumer.subscribe(List.of(config.getKafkaProperties().hubConsumer().topic()));
 
             while (true) {
-                ConsumerRecords<String, HubEventAvro> data = consumer.poll(Duration.ofMillis(500));
+                ConsumerRecords<String, HubEventAvro> data = consumer.poll(Duration.ofMillis(5000));
                 log.info("ПОЛУЧИЛИ ЗАПИСИ ХАБА");
                 for (ConsumerRecord<String, HubEventAvro> record : data) {
                     HubEventAvro avro = record.value();
@@ -51,18 +51,6 @@ public class HubEventProcessor implements Runnable {
                     consumer.commitSync(offsets);
                 }
             }
-        } catch (WakeupException ignored) {
-//        } catch (Exception e) {
-//            log.error("Ошибка во время обработки событий от датчиков", e);
-//        } finally {
-//            try {
-//                consumer.commitSync(offsets);
-//            } catch (Exception e) {
-//                log.error("Смещения не зафиксированы");
-//            } finally {
-//                log.info("Закрываем консьюмер");
-//                consumer.close();
-//            }
-        }
+        } catch (WakeupException ignored) {}
     }
 }
