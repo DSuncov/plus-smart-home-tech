@@ -1,7 +1,6 @@
 package ru.yandex.practicum.telemetry.analyzer.client;
 
 import com.google.protobuf.Timestamp;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Component;
@@ -9,9 +8,11 @@ import ru.yandex.practicum.grpc.telemetry.event.ActionTypeProto;
 import ru.yandex.practicum.grpc.telemetry.event.DeviceActionProto;
 import ru.yandex.practicum.grpc.telemetry.event.DeviceActionRequest;
 import ru.yandex.practicum.grpc.telemetry.hubrouter.HubRouterControllerGrpc;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceActionAvro;
+import ru.yandex.practicum.telemetry.analyzer.model.Action;
+import ru.yandex.practicum.telemetry.analyzer.model.ScenarioAction;
 
 import java.time.Instant;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -23,22 +24,24 @@ public class HubRouterClient {
         this.hubRouterClient = hubRouterClient;
     }
 
-    public void sendDeviceRequestAction(String hubId, String name, DeviceActionAvro action) {
-        try {
-            DeviceActionRequest request = convert(hubId, name, action);
-            hubRouterClient.handleDeviceAction(request);
-            log.info("УСПЕШНО ОТПРАВЛЕН В ХАБ");
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void sendDeviceRequestAction(String hubId, String name, List<ScenarioAction> actions) {
+        for (ScenarioAction scenarioAction : actions) {
+            try {
+                DeviceActionRequest request = convertForRequest(hubId, name, scenarioAction);
+                hubRouterClient.handleDeviceAction(request);
+            } catch (Exception e) {
+                log.error("Ошибка при отправке сообщения по gRPC");
+            }
         }
     }
 
-    private DeviceActionRequest convert(String hubId, String name, DeviceActionAvro action) {
+    private DeviceActionRequest convertForRequest(String hubId, String name, ScenarioAction scenarioAction) {
+        Action action = scenarioAction.getAction();
         DeviceActionProto.Builder deviceActionProto = DeviceActionProto.newBuilder()
-                .setSensorId(action.getSensorId())
+                .setSensorId(scenarioAction.getSensor().getId())
                 .setType(ActionTypeProto.valueOf(action.getType().name()));
 
-                if (action.getValue() != null) {
+                if (action.getType() != null) {
                     deviceActionProto.setValue(action.getValue());
                 }
 

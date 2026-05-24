@@ -26,6 +26,7 @@ public class HubKafkaConsumerConfig {
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.bootstrapServers());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.keyDeserializer());
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, kafkaProperties.enableAutoCommit());
+        properties.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, kafkaProperties.fetchMaxWaitMs());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, config.valueDeserializer());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, config.groupId());
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, config.autoOffsetReset());

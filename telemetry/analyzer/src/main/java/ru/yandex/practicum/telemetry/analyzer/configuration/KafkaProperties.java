@@ -7,6 +7,7 @@ public record KafkaProperties(
         String bootstrapServers,
         String keyDeserializer,
         Boolean enableAutoCommit,
+        Integer fetchMaxWaitMs,
 
         ConsumerGroup hubConsumer,
         ConsumerGroup snapshotConsumer

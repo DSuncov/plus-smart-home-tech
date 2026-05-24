@@ -12,6 +12,8 @@ import ru.yandex.practicum.telemetry.analyzer.model.enums.Operation;
 import ru.yandex.practicum.telemetry.analyzer.repository.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class HubEventDbHandlerImpl implements HubEventDbHandler {
     private final ScenarioActionRepository scenarioActionRepository;
 
     @Override
-    public void typeHandler(HubEventAvro avro) {
+    public void handler(HubEventAvro avro) {
         String hubId = avro.getHubId();
         switch (avro.getPayload()) {
             case DeviceAddedEventAvro deviceAddedEventAvro -> deviceAdded(deviceAddedEventAvro, hubId);
@@ -58,6 +60,13 @@ public class HubEventDbHandlerImpl implements HubEventDbHandler {
         Scenario scenario = scenarioRepository.findByNameAndHubId(avro.getName(), hubId)
                 .orElseGet(() -> scenarioRepository.save(Scenario.builder().hubId(hubId).name(avro.getName()).build()));
 
+        List<Sensor> sensors = sensorRepository.findByHubId(hubId);
+        Map<String, Sensor> sensorsMap = sensors.stream()
+                .collect(Collectors.toMap(
+                        Sensor::getId,
+                        s-> s
+                ));
+
         List<ScenarioCondition> conditions = avro.getConditions().stream()
                 .map(c -> {
                     Condition condition = conditionRepository.save(Condition.builder()
@@ -72,7 +81,7 @@ public class HubEventDbHandlerImpl implements HubEventDbHandler {
                                     .sensorId(c.getSensorId())
                                     .build())
                             .scenario(scenario)
-                            .sensor(sensorRepository.findBySensorId(c.getSensorId()).get())
+                            .sensor(sensorsMap.get(c.getSensorId()))
                             .condition(condition)
                             .build();
                 })
@@ -94,7 +103,7 @@ public class HubEventDbHandlerImpl implements HubEventDbHandler {
                                     .sensorId(a.getSensorId())
                                     .build())
                             .scenario(scenario)
-                            .sensor(sensorRepository.findBySensorId(a.getSensorId()).get())
+                            .sensor(sensorsMap.get(a.getSensorId()))
                             .action(action)
                             .build();
                 })

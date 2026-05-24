@@ -28,6 +28,8 @@ public class HubEventProcessor implements Runnable {
     private final Map<TopicPartition, OffsetAndMetadata> offsets = new ConcurrentHashMap<>();
     private final HubEventDbHandlerImpl handler;
 
+    private static final Integer OFFSET_INCREMENT = 1;
+
     @Override
     @KafkaListener(topics = "telemetry.hubs.v1", groupId = "analyzer-hub-group")
     public void run() {
@@ -36,14 +38,13 @@ public class HubEventProcessor implements Runnable {
             consumer.subscribe(List.of(config.getKafkaProperties().hubConsumer().topic()));
 
             while (true) {
-                ConsumerRecords<String, HubEventAvro> data = consumer.poll(Duration.ofMillis(5000));
-                log.info("ПОЛУЧИЛИ ЗАПИСИ ХАБА");
+                ConsumerRecords<String, HubEventAvro> data = consumer.poll(Duration.ofMillis(config.getKafkaProperties().fetchMaxWaitMs()));
                 for (ConsumerRecord<String, HubEventAvro> record : data) {
                     HubEventAvro avro = record.value();
 
                     if (avro != null) {
-                        offsets.put(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1));
-                        handler.typeHandler(avro);
+                        offsets.put(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + OFFSET_INCREMENT));
+                        handler.handler(avro);
                     }
                 }
 

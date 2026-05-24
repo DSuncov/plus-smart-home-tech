@@ -28,6 +28,8 @@ public class SnapshotProcessor implements Runnable {
     private final Map<TopicPartition, OffsetAndMetadata> offsets = new ConcurrentHashMap<>();
     private final SnapshotDbHandler handler;
 
+    private static final Integer OFFSET_INCREMENT = 1;
+
     @Override
     @KafkaListener(topics = "telemetry.snapshots.v1", groupId = "analyzer-snapshot-group")
     public void run() {
@@ -36,15 +38,12 @@ public class SnapshotProcessor implements Runnable {
             consumer.subscribe(List.of(config.getKafkaProperties().snapshotConsumer().topic()));
 
             while (true) {
-                ConsumerRecords<String, SensorsSnapshotAvro> data = consumer.poll(Duration.ofMillis(5000));
-                log.info("ПОЛУЧИЛИ ЗАПИСИ СНАПШОТА");
+                ConsumerRecords<String, SensorsSnapshotAvro> data = consumer.poll(Duration.ofMillis(config.getKafkaProperties().fetchMaxWaitMs()));
                 for (ConsumerRecord<String, SensorsSnapshotAvro> record : data) {
                     SensorsSnapshotAvro avro = record.value();
                     if (avro != null) {
-                        offsets.put(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1));
-                        log.info("ОТПРАВЛЯЕМ НА ОБРАБОТКУ");
-                        handler.typeHandler(avro);
-                        log.info("ВЫПОЛНИЛИ ОБРАБОТКУ");
+                        offsets.put(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + OFFSET_INCREMENT));
+                        handler.handler(avro);
                     }
                 }
 
@@ -52,7 +51,6 @@ public class SnapshotProcessor implements Runnable {
                     consumer.commitSync(offsets);
                 }
             }
-        } catch (WakeupException ignored) {
-        }
+        } catch (WakeupException ignored) {}
     }
 }
