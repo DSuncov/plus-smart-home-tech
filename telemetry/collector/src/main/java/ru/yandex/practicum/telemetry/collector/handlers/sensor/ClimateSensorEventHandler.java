@@ -1,25 +1,28 @@
-package ru.yandex.practicum.telemetry.collector.utils.handlers.sensor;
+package ru.yandex.practicum.telemetry.collector.handlers.sensor;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.grpc.telemetry.event.ClimateSensorProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 import java.time.Instant;
 
 @Component
-public class LightSensorEventHandler implements BaseSensorEventHandler {
+public class ClimateSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
     public SensorEventAvro mapToAvro(SensorEventProto sensorEvent) {
-        LightSensorAvro payload = LightSensorAvro.newBuilder()
-                .setLinkQuality(sensorEvent.getLightSensor().getLinkQuality())
-                .setLuminosity(sensorEvent.getLightSensor().getLuminosity())
+        ClimateSensorProto climateSensorProto = sensorEvent.getClimateSensor();
+        ClimateSensorAvro payload = ClimateSensorAvro.newBuilder()
+                .setTemperatureC(climateSensorProto.getTemperatureC())
+                .setHumidity(climateSensorProto.getHumidity())
+                .setCo2Level(climateSensorProto.getCo2Level())
                 .build();
 
         return SensorEventAvro.newBuilder()
-                .setHubId(sensorEvent.getHubId())
                 .setId(sensorEvent.getId())
+                .setHubId(sensorEvent.getHubId())
                 .setTimestamp(Instant.ofEpochSecond(
                         sensorEvent.getTimestamp().getSeconds(),
                         sensorEvent.getTimestamp().getNanos()
@@ -30,6 +33,6 @@ public class LightSensorEventHandler implements BaseSensorEventHandler {
 
     @Override
     public SensorEventProto.PayloadCase getType() {
-        return SensorEventProto.PayloadCase.LIGHT_SENSOR;
+        return SensorEventProto.PayloadCase.CLIMATE_SENSOR;
     }
 }

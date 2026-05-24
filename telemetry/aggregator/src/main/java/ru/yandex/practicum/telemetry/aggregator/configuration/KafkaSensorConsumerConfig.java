@@ -14,7 +14,7 @@ import java.util.Properties;
 @Getter
 public class KafkaSensorConsumerConfig {
 
-    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     @Value("${spring.kafka.consumer.key-deserializer}")
