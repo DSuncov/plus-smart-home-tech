@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: collector
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+    value-serializer: "ru.yandex.practicum.kafka.serializer.GeneralAvroSerializer"
+    topic-hubs: "telemetry.hubs.v1"
+    topic-sensors: "telemetry.sensors.v1"
+
+grpc:
+  server:
+    port: 59091
+
+logging:
+  level:
+    ru:
+      practicum:
+        kafka: INFO
+    org:
+      springframework: ERROR
+      apache:
+        kafka: WARN

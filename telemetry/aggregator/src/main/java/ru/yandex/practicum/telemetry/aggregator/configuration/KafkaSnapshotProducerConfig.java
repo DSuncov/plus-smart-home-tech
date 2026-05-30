@@ -1,8 +1,9 @@
 package ru.yandex.practicum.telemetry.aggregator.configuration;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -14,33 +15,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@EnableConfigurationProperties(KafkaAggregatorProperties.class)
+@RequiredArgsConstructor
 @Getter
 public class KafkaSnapshotProducerConfig {
 
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
-
-    @Value("${spring.kafka.producer.key-serializer}")
-    private String keySerializer;
-
-    @Value("${spring.kafka.producer.value-serializer}")
-    private String valueSerializer;
-
-    @Value("${spring.kafka.producer.topic.snapshots}")
-    private String topicSnapshots;
+    private final KafkaAggregatorProperties kafkaProperties;
 
     public ProducerFactory<String, SensorsSnapshotAvro> producerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
+        KafkaAggregatorProperties.ProducerGroup config = kafkaProperties.producer();
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.bootstrapServers());
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, config.keySerializer());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, config.valueSerializer());
 
-        return new DefaultKafkaProducerFactory<>(config);
+        return new DefaultKafkaProducerFactory<>(properties);
     }
 
     @Bean
     public KafkaTemplate<String, SensorsSnapshotAvro> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
-
 }

@@ -38,10 +38,10 @@ public class AggregationStarter {
 
             Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
 
-            consumer.subscribe(List.of(config.getTopicSensors()));
+            consumer.subscribe(List.of(config.getKafkaProperties().consumer().topic()));
 
             while (true) {
-                ConsumerRecords<String, SensorEventAvro> data = consumer.poll(Duration.ofMillis(config.getFetchMaxWaitMs()));
+                ConsumerRecords<String, SensorEventAvro> data = consumer.poll(Duration.ofMillis(config.getKafkaProperties().consumer().fetchMaxWaitMs()));
 
                 for (ConsumerRecord<String, SensorEventAvro> record : data) {
                     SensorEventAvro sensorEventAvro = record.value();

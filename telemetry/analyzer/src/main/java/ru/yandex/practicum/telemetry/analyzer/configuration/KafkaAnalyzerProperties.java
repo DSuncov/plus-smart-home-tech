@@ -3,7 +3,7 @@ package ru.yandex.practicum.telemetry.analyzer.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "spring.kafka")
-public record KafkaProperties(
+public record KafkaAnalyzerProperties(
         String bootstrapServers,
         String keyDeserializer,
         Boolean enableAutoCommit,

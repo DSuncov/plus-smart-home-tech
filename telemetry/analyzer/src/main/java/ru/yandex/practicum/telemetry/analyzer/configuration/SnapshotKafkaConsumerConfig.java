@@ -12,16 +12,16 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 import java.util.Properties;
 
 @Configuration
-@EnableConfigurationProperties(KafkaProperties.class)
+@EnableConfigurationProperties(KafkaAnalyzerProperties.class)
 @RequiredArgsConstructor
 @Getter
 public class SnapshotKafkaConsumerConfig {
 
-    private final KafkaProperties kafkaProperties;
+    private final KafkaAnalyzerProperties kafkaProperties;
 
     @Bean("snapshotConsumerFactory")
     public Properties snapshotConsumerFactory() {
-        KafkaProperties.ConsumerGroup config = kafkaProperties.snapshotConsumer();
+        KafkaAnalyzerProperties.ConsumerGroup config = kafkaProperties.snapshotConsumer();
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.bootstrapServers());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaProperties.keyDeserializer());
