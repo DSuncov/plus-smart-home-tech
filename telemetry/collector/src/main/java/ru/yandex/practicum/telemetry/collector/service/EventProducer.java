@@ -24,7 +24,7 @@ public class EventProducer implements AutoCloseable {
     public void send(SensorEventProto event, BaseSensorEventHandler sensorEventHandler) {
         SensorEventAvro sensorEventAvro = sensorEventHandler.mapToAvro(event);
 
-        String topic = config.getTopicSensors();
+        String topic = config.getKafkaProperties().topicSensors();
         long timestamp = event.getTimestamp().getSeconds();
         String hubId = sensorEventAvro.getHubId();
 
@@ -41,7 +41,7 @@ public class EventProducer implements AutoCloseable {
     public void send(HubEventProto event, BaseHubEventHandler baseHubEventHandler) {
         HubEventAvro hubEventAvro = baseHubEventHandler.mapToAvro(event);
 
-        String topic = config.getTopicHubs();
+        String topic = config.getKafkaProperties().topicHubs();
         long timestamp = event.getTimestamp().getSeconds();
         String hubId = hubEventAvro.getHubId();
 

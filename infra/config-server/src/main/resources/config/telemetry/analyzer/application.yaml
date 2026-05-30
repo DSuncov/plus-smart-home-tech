@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: analyzer
+  config:
+    activate:
+      profile:
+        on-profile: ci
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+    enable-auto-commit: false
+    fetch-max-wait-ms: 500
+    hub-consumer:
+      topic: "telemetry.hubs.v1"
+      group-id: "analyzer-hub-group"
+      value-deserializer: "ru.yandex.practicum.kafka.deserializer.HubEventDeserializer"
+      max-poll-records: 100
+      auto-offset-reset: earliest
+    snapshot-consumer:
+      topic: "telemetry.snapshots.v1"
+      group-id: "analyzer-snapshot-group"
+      value-deserializer: "ru.yandex.practicum.kafka.deserializer.SnapshotDeserializer"
+      max-poll-records: 100
+      auto-offset-reset: earliest
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6541/smart_home
+    username: postgres
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:./schema.sql
+
+grpc:
+  server:
+    port: 8081
+  client:
+    hub-router:
+      address: "static://localhost:59090"
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+
+server:
+  port: 9089
+
+logging:
+  level:
+    ru:
+      practicum:
+        kafka: INFO
+    org:
+      springframework: ERROR
+      apache:
+        kafka: WARN

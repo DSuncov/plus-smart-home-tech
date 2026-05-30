@@ -17,7 +17,7 @@ public class SnapshotProducer implements AutoCloseable {
 
     public void send(SensorsSnapshotAvro snapshot) {
 
-        String topic = config.getTopicSnapshots();
+        String topic = config.getKafkaProperties().producer().topic();
         long timestamp = snapshot.getTimestamp().getEpochSecond();
         String hubId = snapshot.getHubId();
 
