@@ -51,3 +51,57 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+
+  db-store:
+    image: postgres:16.1
+    container_name: store
+    ports:
+      - "7541:5432"
+    environment:
+      - POSTGRES_PASSWORD=store
+      - POSTGRES_USER=store
+      - POSTGRES_DB=store
+      - TZ=Europe/Samara
+    ##volumes:
+    ##  - ./analyzer/src/main/resources:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  db-cart:
+    image: postgres:16.1
+    container_name: cart
+    ports:
+      - "8541:5432"
+    environment:
+      - POSTGRES_PASSWORD=cart
+      - POSTGRES_USER=cart
+      - POSTGRES_DB=cart
+      - TZ=Europe/Samara
+    ##volumes:
+    ##  - ./analyzer/src/main/resources:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  db-warehouse:
+    image: postgres:16.1
+    container_name: warehouse
+    ports:
+      - "9541:5432"
+    environment:
+      - POSTGRES_PASSWORD=warehouse
+      - POSTGRES_USER=warehouse
+      - POSTGRES_DB=warehouse
+      - TZ=Europe/Samara
+    ##volumes:
+    ##  - ./analyzer/src/main/resources:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
