@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: shopping-store
+  config:
+    activate:
+      profile:
+        on-profile: ci
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:7541/store
+    username: store
+    password: store
+  jpa:
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:./schema.sql
+
+server:
+  port: 0
+
+logging:
+  level:
+    org:
+      springframework: ERROR
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
