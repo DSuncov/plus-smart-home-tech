@@ -20,6 +20,7 @@ import java.util.UUID;
 public class Product {
 
     @Id
+    //@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "product_id", nullable = false)
     UUID productId;
 

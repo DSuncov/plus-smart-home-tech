@@ -1,7 +1,9 @@
 package ru.yandex.practicum.commerce.feign.warehouse;
 
 import org.springframework.cloud.openfeign.FallbackFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class WarehouseClientFallbackFactory implements FallbackFactory<WarehouseClient> {
     @Override
     public WarehouseClient create(Throwable cause) {

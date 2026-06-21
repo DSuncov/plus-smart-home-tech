@@ -7,7 +7,7 @@ spring:
         on-profile: ci
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:8541/cart
+    url: jdbc:postgresql://localhost:6543/cart
     username: cart
     password: cart
   jpa:

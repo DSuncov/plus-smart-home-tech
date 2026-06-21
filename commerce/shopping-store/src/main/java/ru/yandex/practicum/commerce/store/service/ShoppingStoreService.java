@@ -21,9 +21,8 @@ import ru.yandex.practicum.commerce.store.repository.ShoppingStoreRepository;
 import ru.yandex.practicum.commerce.utils.PageableObject;
 import ru.yandex.practicum.commerce.utils.SortObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -143,5 +142,20 @@ public class ShoppingStoreService {
         product.setQuantityState(QuantityState.valueOf(request.quantityState()));
         Product updatedProduct = repository.save(product);
         return product.getQuantityState().equals(updatedProduct.getQuantityState());
+    }
+
+    @Transactional(readOnly = true)
+    public Map<UUID, BigDecimal> getProductsPrice(Set<UUID> ids) {
+        List<Object[]> results = repository.findProductsPrice(ids);
+        Map<UUID, BigDecimal> response = new HashMap<>();
+
+        for (Object[] row : results) {
+            UUID productId = (UUID) row[0];
+            BigDecimal price = (BigDecimal) row[1];
+
+            response.put(productId, price);
+        }
+
+        return response;
     }
 }

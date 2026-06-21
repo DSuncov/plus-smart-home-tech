@@ -10,6 +10,9 @@ import ru.yandex.practicum.commerce.dto.store.PageProductDto;
 import ru.yandex.practicum.commerce.dto.store.ProductDto;
 import ru.yandex.practicum.commerce.enums.ProductCategory;
 
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ShoppingStoreOperations {
@@ -21,6 +24,9 @@ public interface ShoppingStoreOperations {
             @RequestParam(defaultValue = "20") Integer size,
             Sort sort
     );
+
+    @GetMapping("/price")
+    Map<UUID, BigDecimal> getProductsPrice(Set<UUID> ids);
 
     @GetMapping("/{productId}")
     ResponseEntity<ProductDto> getProductById(@PathVariable @NotBlank String productId);

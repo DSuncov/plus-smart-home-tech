@@ -14,6 +14,9 @@ public interface WarehouseRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p.productId, p.quantity FROM Product p WHERE p.productId in :ids ")
     List<Object[]> findProductDetails(@Param("ids") Set<UUID> ids);
 
+    @Query("SELECT p.productId FROM Product p WHERE p.productId in :ids ")
+    List<Object[]> findProductsIds(@Param("ids") Set<UUID> ids);
+
     @Query("SELECT p FROM Product p WHERE p.productId in :ids ")
     List<Product> findProducts(@Param("ids") Set<UUID> ids);
 }

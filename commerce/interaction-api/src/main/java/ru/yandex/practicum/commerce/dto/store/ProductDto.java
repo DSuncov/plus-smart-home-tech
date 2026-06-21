@@ -7,6 +7,7 @@ import ru.yandex.practicum.commerce.enums.ProductCategory;
 import ru.yandex.practicum.commerce.enums.ProductState;
 import ru.yandex.practicum.commerce.enums.QuantityState;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ProductDto(
@@ -17,5 +18,5 @@ public record ProductDto(
         @NotNull QuantityState quantityState,
         @NotNull ProductState productState,
         ProductCategory productCategory,
-        @NotNull @Min(1) Double price
+        @NotNull @Min(1) BigDecimal price
 ) {}

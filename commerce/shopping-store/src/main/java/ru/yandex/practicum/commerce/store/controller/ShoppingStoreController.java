@@ -13,6 +13,10 @@ import ru.yandex.practicum.commerce.enums.ProductCategory;
 import ru.yandex.practicum.commerce.feign.store.ShoppingStoreOperations;
 import ru.yandex.practicum.commerce.store.service.ShoppingStoreService;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -32,6 +36,11 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
     ) {
         PageProductDto response = service.getProductsByCategory(category, page, size, sort);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public Map<UUID, BigDecimal> getProductsPrice(Set<UUID> ids) {
+        return service.getProductsPrice(ids);
     }
 
     @Override

@@ -7,6 +7,7 @@ import ru.yandex.practicum.commerce.enums.ProductCategory;
 import ru.yandex.practicum.commerce.enums.ProductState;
 import ru.yandex.practicum.commerce.enums.QuantityState;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public class Product {
     ProductCategory productCategory;
 
     @Column(name = "price", nullable = false)
-    Double price;
+    BigDecimal price;
 
     @Override
     public boolean equals(Object object) {
