@@ -5,10 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.commerce.dto.warehouse.AddProductToWarehouseRequest;
-import ru.yandex.practicum.commerce.dto.warehouse.AddressDto;
-import ru.yandex.practicum.commerce.dto.warehouse.BookedProductsDto;
-import ru.yandex.practicum.commerce.dto.warehouse.ProductDto;
+import ru.yandex.practicum.commerce.dto.delivery.ShippedRequest;
+import ru.yandex.practicum.commerce.dto.order.ProductReturnRequest;
+import ru.yandex.practicum.commerce.dto.warehouse.*;
 import ru.yandex.practicum.commerce.feign.warehouse.WarehouseOperations;
 import ru.yandex.practicum.commerce.warehouse.service.WarehouseService;
 
@@ -29,8 +28,24 @@ public class WarehouseController implements WarehouseOperations {
     }
 
     @Override
+    public void shipped(ShippedRequest request) {
+        service.shippedToDelivery(request);
+    }
+
+    @Override
+    public void returnToWarehouse(ProductReturnRequest request) {
+        service.returnProductsToWarehouse(request);
+    }
+
+    @Override
     public ResponseEntity<BookedProductsDto> checkQuantityProductInWarehouse(Map<UUID, Long> products) {
         BookedProductsDto response = service.checkQuantityProductInWarehouse(products);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<BookedProductsDto> assemblyProductForOrderFromShoppingCart(AssemblyProductsForOrderRequest request) {
+        BookedProductsDto response = service.assemblyProductForOrderFromShoppingCart(request);
         return ResponseEntity.ok(response);
     }
 

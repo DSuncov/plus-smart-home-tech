@@ -7,7 +7,7 @@ spring:
         on-profile: ci
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:7541/store
+    url: jdbc:postgresql://localhost:6542/store
     username: store
     password: store
   jpa:

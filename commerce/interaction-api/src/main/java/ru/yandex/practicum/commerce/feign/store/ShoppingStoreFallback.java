@@ -6,12 +6,20 @@ import ru.yandex.practicum.commerce.dto.store.PageProductDto;
 import ru.yandex.practicum.commerce.dto.store.ProductDto;
 import ru.yandex.practicum.commerce.enums.ProductCategory;
 
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class ShoppingStoreFallback implements ShoppingStoreClient {
 
     @Override
     public ResponseEntity<PageProductDto> getProductsByCategory(ProductCategory category, Integer page, Integer size, Sort sort) {
+        throw new RuntimeException("Сервис недоступен.");
+    }
+
+    @Override
+    public Map<UUID, BigDecimal> getProductsPrice(Set<UUID> ids) {
         throw new RuntimeException("Сервис недоступен.");
     }
 

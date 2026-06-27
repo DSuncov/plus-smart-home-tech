@@ -7,9 +7,9 @@ spring:
         on-profile: ci
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6541/smart_home
-    username: postgres
-    password: password
+    url: jdbc:postgresql://localhost:6544/warehouse
+    username: warehouse
+    password: warehouse
   jpa:
     hibernate:
       ddl-auto: none

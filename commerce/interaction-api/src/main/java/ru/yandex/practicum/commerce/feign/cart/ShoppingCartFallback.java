@@ -5,7 +5,6 @@ import ru.yandex.practicum.commerce.dto.cart.ChangeProductQuantityRequest;
 import ru.yandex.practicum.commerce.dto.cart.ShoppingCartDto;
 import ru.yandex.practicum.commerce.exception.NotAuthorizedUserException;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 

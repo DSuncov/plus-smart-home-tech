@@ -1,11 +1,9 @@
 package ru.yandex.practicum.commerce.feign.warehouse;
 
 import org.springframework.http.ResponseEntity;
-import ru.yandex.practicum.commerce.dto.cart.ShoppingCartDto;
-import ru.yandex.practicum.commerce.dto.warehouse.AddProductToWarehouseRequest;
-import ru.yandex.practicum.commerce.dto.warehouse.AddressDto;
-import ru.yandex.practicum.commerce.dto.warehouse.BookedProductsDto;
-import ru.yandex.practicum.commerce.dto.warehouse.ProductDto;
+import ru.yandex.practicum.commerce.dto.delivery.ShippedRequest;
+import ru.yandex.practicum.commerce.dto.order.ProductReturnRequest;
+import ru.yandex.practicum.commerce.dto.warehouse.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -18,7 +16,23 @@ public class WarehouseClientFallback implements WarehouseClient{
     }
 
     @Override
+    public void shipped(ShippedRequest request) {
+        throw new RuntimeException("Сервис недоступен.");
+    }
+
+    @Override
+    public void returnToWarehouse(ProductReturnRequest request) {
+        throw new RuntimeException("Сервис недоступен.");
+
+    }
+
+    @Override
     public ResponseEntity<BookedProductsDto> checkQuantityProductInWarehouse(Map<UUID, Long> products) {
+        throw new RuntimeException("Сервис недоступен.");
+    }
+
+    @Override
+    public ResponseEntity<BookedProductsDto> assemblyProductForOrderFromShoppingCart(AssemblyProductsForOrderRequest request) {
         throw new RuntimeException("Сервис недоступен.");
     }
 

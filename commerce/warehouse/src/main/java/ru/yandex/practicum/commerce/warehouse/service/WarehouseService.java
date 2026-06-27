@@ -4,16 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.commerce.dto.warehouse.AddProductToWarehouseRequest;
-import ru.yandex.practicum.commerce.dto.warehouse.AddressDto;
-import ru.yandex.practicum.commerce.dto.warehouse.BookedProductsDto;
-import ru.yandex.practicum.commerce.dto.warehouse.ProductDto;
+import ru.yandex.practicum.commerce.dto.delivery.ShippedRequest;
+import ru.yandex.practicum.commerce.dto.order.ProductReturnRequest;
+import ru.yandex.practicum.commerce.dto.warehouse.*;
+import ru.yandex.practicum.commerce.exception.NoOrderBookingFoundException;
 import ru.yandex.practicum.commerce.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.commerce.exception.ProductInShoppingCartLowQuantityInWarehouse;
 import ru.yandex.practicum.commerce.exception.SpecifiedProductAlreadyInWarehouseException;
+import ru.yandex.practicum.commerce.feign.store.ShoppingStoreClient;
 import ru.yandex.practicum.commerce.warehouse.mapper.WarehouseMapper;
 import ru.yandex.practicum.commerce.warehouse.model.Dimension;
+import ru.yandex.practicum.commerce.warehouse.model.OrderBooking;
 import ru.yandex.practicum.commerce.warehouse.model.Product;
+import ru.yandex.practicum.commerce.warehouse.repository.OrderBookingRepository;
 import ru.yandex.practicum.commerce.warehouse.repository.WarehouseRepository;
 
 import java.security.SecureRandom;
@@ -25,6 +28,7 @@ import java.util.*;
 public class WarehouseService {
 
     private final WarehouseRepository repository;
+    private final OrderBookingRepository orderBookingRepository;
     private final WarehouseMapper mapper;
 
     private static final String[] ADDRESSES =
@@ -58,7 +62,7 @@ public class WarehouseService {
         boolean equal = Objects.equals(products.keySet(), current.keySet());
 
         if (!equal) {
-            throw new NoSpecifiedProductInWarehouseException("Товары отсутствуют на складе.");
+            throw new NoSpecifiedProductInWarehouseException("Часть товаров отсутствует на складе.");
         }
 
         boolean isNotEnough = products.entrySet().stream()
@@ -110,5 +114,73 @@ public class WarehouseService {
 
         log.info("Информация об адресе склада получена.");
         return addressDto;
+    }
+
+    public void shippedToDelivery(ShippedRequest request) {
+        log.info("Проверяем наличие бронирования для заказа с id = {}.", request.orderId());
+        OrderBooking orderBooking = orderBookingRepository.findByOrderId(request.orderId())
+                .orElseThrow(() -> new NoOrderBookingFoundException("Бронировавние для заказа не найдено"));
+
+        log.info("Добавляем идентификатор доставки и сохраняем изменения в БД.");
+        orderBooking.setDeliveryId(request.deliveryId());
+        orderBookingRepository.save(orderBooking);
+    }
+
+    public BookedProductsDto assemblyProductForOrderFromShoppingCart(AssemblyProductsForOrderRequest request) {
+        Map<UUID, Long> products = request.products();
+
+        log.info("Проверяем наличие товаров в достаточном количестве на складе.");
+        BookedProductsDto result = checkQuantityProductInWarehouse(products);
+
+        log.info("Уменьшаем количество доступных товаров на складе.");
+        List<Product> bookedProducts = repository.findProducts(products.keySet());
+
+        for (Product product : bookedProducts) {
+            product.setQuantity(product.getQuantity() - products.get(product.getProductId()));
+        }
+
+        log.info("Сохраняем обновленное количество товаров на складе.");
+        repository.saveAll(bookedProducts);
+
+        log.info("Бронируем товары для заказа и сохраняем изменения в БД.");
+        OrderBooking orderBooking = new OrderBooking();
+        orderBooking.setOrderId(request.orderId());
+        orderBooking.setProducts(products);
+        orderBookingRepository.save(orderBooking);
+
+        return result;
+    }
+
+    public void returnProductsToWarehouse(ProductReturnRequest request) {
+        log.info("Проверяем существование товаров на складе.");
+        // Список товаров из запроса
+        Map<UUID, Long> products = request.products();
+
+        // Получаем список товаров, которые есть на складе по списку UUID из запроса
+        List<Object[]> results = repository.findProductsIds(products.keySet());
+        Set<UUID> current = new HashSet<>();
+
+        for (Object[] row : results) {
+            UUID productId = (UUID) row[0];
+
+            current.add(productId);
+        }
+
+        // Сравниваем UUID товаров на складе и из запроса
+        boolean equal = Objects.equals(products.keySet(), current);
+
+        if (!equal) {
+            throw new NoSpecifiedProductInWarehouseException("Часть товаров отсутствует на складе.");
+        }
+
+        log.info("Возвращаем товары на склад.");
+        List<Product> bookedProducts = repository.findProducts(products.keySet());
+
+        for (Product product : bookedProducts) {
+            product.setQuantity(product.getQuantity() + products.get(product.getProductId()));
+        }
+
+        log.info("Сохраняем обновленное количество товаров на складе.");
+        repository.saveAll(bookedProducts);
     }
 }
